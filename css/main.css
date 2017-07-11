@@ -1,0 +1,14 @@
+body {
+  text-align: center;
+  font-family: Meiryo,メイリオ,'Hiragino Kaku Gothic Pro','ヒラギノ角ゴ Pro W3',sans-serif;
+}
+
+#main {
+  margin: 150px auto 100px;
+  font-size: 48px;
+  letter-spacing: 5px;
+}
+
+#result {
+  color: rgba(18, 17, 13, 0.73);
+}
