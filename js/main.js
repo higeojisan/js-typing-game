@@ -5,6 +5,7 @@
   var start_time;
   var timer_id;
   var main = document.getElementById('main');
+  var remaining_time_ele = document.getElementById('remaining-time');
   // 表示用の単語
   var words = [
     'apple', 'delegate', 'primary', 'summary', 'product',
@@ -46,10 +47,13 @@
     var date = new Date();
     var now = date.getTime();
     var elapsed_time = now - start_time;
-    console.log(elapsed_time);
     if (elapsed_time >= time_limit) {
+      remaining_time_ele.innerText = 0;
+      //alert('終了！');
       clearInterval(timer_id);
-      alert('終了！');
+    } else {
+      var remaining_time = Math.ceil((time_limit - elapsed_time) / 1000);
+      remaining_time_ele.innerText = remaining_time;
     }
   }
 
@@ -61,6 +65,7 @@
       var start_date_obj = new Date();
       // 開始時間(ミリ秒)の取得
       start_time = start_date_obj.getTime();
+      // タイマー開始
       timer_id = setInterval(calcElapsedTime, 100);
       startGame();
     } else {
@@ -76,13 +81,15 @@
 
   // メイン処理
   function startGame() {
+    var words_count = 0;
     // 単語を表示する
     displayWord();
+    // キーイベント
+    document.addEventListener('keydown', function(e) {
+      // 押された文字の取得
+      console.log(words[words_count]);
+    })
   }
 
-  // キーイベント
-  document.addEventListener('keydown', function(e) {
-    // 押された文字の取得
-    console.log(key_codes([e.keyCode]));
-  })
+
 })();
