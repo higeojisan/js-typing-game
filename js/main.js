@@ -1,10 +1,16 @@
 (function() {
   'use strict';
 
-  var time_limit = 10000;
-  var start_time;
+  var time_limit = 10;
+  var word;
+  var letter_pos;
+  var letter_count = 0;
+  var miss_count = 0;
+  var isStarted = false;
   var timer_id;
   var main = document.getElementById('main');
+  var letter_count_ele = document.getElementById('letter-count');
+  var miss_count_ele = document.getElementById('miss-count');
   var remaining_time_ele = document.getElementById('remaining-time');
   // 表示用の単語
   var words = [
@@ -12,58 +18,52 @@
     'surplus', 'cache', 'available', 'expire', 'value',
     'summer', 'operation', 'development', 'medical', 'submit',
   ];
-  // キーコードのオブジェクト
-  var key_codes = {
-    '65': 'a', '66': 'b', '67': 'c', '68': 'd', '69': 'e', '70': 'f',
-    '71': 'g', '72': 'h', '73': 'i', '74': 'j', '75': 'k', '76': 'l',
-    '77': 'm', '78': 'n', '79': 'o', '80': 'p', '81': 'q', '82': 'r',
-    '83': 's', '84': 't', '85': 'u', '86': 'v', '87': 'w', '88': 'x',
-    '89': 'y', '90': 'z',
-  };
 
-  // 経過時間の計算
-  function calcElapsedTime() {
-    var date = new Date();
-    var now = date.getTime();
-    var elapsed_time = now - start_time;
-    if (elapsed_time >= time_limit) {
-      remaining_time_ele.innerText = 0;
-      //alert('終了！');
-      clearInterval(timer_id);
-    } else {
-      var remaining_time = Math.ceil((time_limit - elapsed_time) / 1000);
-      remaining_time_ele.innerText = remaining_time;
-    }
+  function displayWord() {
+    word = words[Math.floor(Math.random() * words.length)];
+    letter_pos = 0;
+    main.innerText = word;
   }
 
-  // 初回の画面クリック時の動作
-  var started = false;
-  document.addEventListener('click', function() {
-    if (started == false) {
-      started = true;
-      var start_date_obj = new Date();
-      // 開始時間(ミリ秒)の取得
-      start_time = start_date_obj.getTime();
-      // タイマー開始
-      timer_id = setInterval(calcElapsedTime, 100);
-      startGame();
+  function setTimer() {
+    timer_id = setInterval(function() {
+      time_limit--;
+      remaining_time_ele.innerText = time_limit;
+      if (time_limit <= 0) {
+        clearInterval(timer_id);
+        setTimeout(function() {
+          alert('accuracy: ' + Math.round(letter_count / (letter_count + miss_count) * 100) + '%');
+        }, 200);
+      }
+    }, 1000);
+  }
+
+  window.addEventListener('click', function() {
+    if (!isStarted) {
+      isStarted = true;
+      setTimer();
+      displayWord();
     } else {
       return;
     }
-  });
+  })
 
-  // 単語を表示する
-  function displayWord() {
-    var word = words[Math.floor(Math.random() * words.length)];
-    main.innerText = word;
-    return word;
-  }
-
-  // メイン処理
-  function startGame() {
-    document.addEventListener('keydown', function(e) {
-      // 押された文字の取得
-
-    })
-  }
+  window.addEventListener('keydown', function(e) {
+    if (word.substr(letter_pos, 1) == String.fromCharCode(e.keyCode).toLowerCase()) {
+      letter_pos++;
+      letter_count++;
+      letter_count_ele.innerText = letter_count;
+      var placeholder = '';
+      for (var i = 0; i < letter_pos; i++) {
+        placeholder += '_';
+      }
+      main.innerText = placeholder + word.substring(letter_pos, word.length);
+      if (letter_pos == word.length) {
+        displayWord();
+      }
+    } else {
+      miss_count++;
+      miss_count_ele.innerText = miss_count;
+    }
+  })
 })();
